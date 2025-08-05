@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurismApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+        }
+
+        .status-online {
+            background-color: #10b981;
+        }
+
+        .status-offline {
+            background-color: #ef4444;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Navigation */
+        .nav {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+        }
+
+        .nav-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .nav-item.active:hover {
+            background: #2563eb;
+        }
+
+        /* Main Content */
+        .content {
+            height: 600px;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 1rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            margin-bottom: 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            padding: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            padding: 0.75rem;
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1rem;
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover {
+            background: #d1d5db;
+        }
+
+        .category-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Place Cards */
+        .place-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .place-card.compact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .place-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .place-card.compact .place-image {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 0;
+        }
+
+        .place-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .place-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .btn-heart {
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            color: #9ca3af;
+            transition: color 0.2s;
+        }
+
+        .btn-heart.active {
+            color: #ef4444;
+        }
+
+        .place-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .place-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .place-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .place-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .place-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-small.blue {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-small.blue:hover {
+            background: #2563eb;
+        }
+
+        .btn-small.green {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-small.green:hover {
+            background: #059669;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Map View */
+        .map-container {
+            height: 100%;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .map-content {
+            background: white;
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .map-header h3 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .map-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .map-view {
+            flex: 1;
+            position: relative;
+        }
+
+        .map-placeholder {
+            position: absolute;
+            inset: 1rem;
+            background: linear-gradient(135deg, #bbf7d0 0%, #bfdbfe 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #4b5563;
+        }
+
+        .map-marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .marker-1 { top: 2rem; left: 2rem; background: #ef4444; }
+        .marker-2 { top: 4rem; right: 3rem; background: #3b82f6; }
+        .marker-3 { bottom: 5rem; left: 4rem; background: #10b981; }
+        .marker-4 { bottom: 3rem; right: 2rem; background: #f59e0b; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Itinerary */
+        .itinerary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .itinerary-item {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .itinerary-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .itinerary-item-title {
+            font-weight: 600;
+        }
+
+        .itinerary-item-time {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .itinerary-item-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .itinerary-item-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-full.green {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-full.green:hover {
+            background: #059669;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.5rem;
+        }
+
+        .btn-close:hover {
+            color: #374151;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-section h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-modal.blue {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-modal.blue:hover {
+            background: #2563eb;
+        }
+
+        .btn-modal.green {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-modal.green:hover {
+            background: #059669;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 56px;
+            height: 56px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.2s;
+        }
+
+        .fab:hover {
+            background: #2563eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-item {
+                flex-direction: column;
+                gap: 0.25rem;
+                font-size: 0.75rem;
+            }
+
+            .place-card.compact {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .place-card.compact .place-image {
+                width: 100%;
+                height: 120px;
+            }
+
+            .modal-content {
+                margin: 1rem;
+            }
+
+            .modal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>TurismApp</h1>
+            <div class="header-right">
+                <div class="status-indicator status-online" id="statusIndicator">
+                    <span>🌐</span>
+                    <span id="statusText">Online</span>
+                </div>
+                <button class="btn-icon" onclick="toggleOfflineMode()">
+                    <span>🌍</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <button class="nav-item active" onclick="showTab('explore')">
+                <span>🔍</span>
+                <span>Explorar</span>
+            </button>
+            <button class="nav-item" onclick="showTab('map')">
+                <span>📍</span>
+                <span>Mapa</span>
+            </button>
+            <button class="nav-item" onclick="showTab('itinerary')">
+                <span>📅</span>
+                <span>Itinerario</span>
+            </button>
+            <button class="nav-item" onclick="showTab('favorites')">
+                <span>❤️</span>
+                <span>Favoritos</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Explore Tab -->
+            <div id="explore" class="tab-content active">
+                <div class="search-section">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar lugares, restaurantes, hoteles..." id="searchInput">
+                        <button class="btn-primary" onclick="searchPlaces()">🔍</button>
+                        <button class="btn-secondary">📊</button>
+                    </div>
+                    
+                    <div class="category-filters">
+                        <button class="category-btn active" onclick="filterByCategory('all')">🌎 Todo</button>
+                        <button class="category-btn" onclick="filterByCategory('monument')">🏛️ Monumentos</button>
+                        <button class="category-btn" onclick="filterByCategory('restaurant')">🍽️ Restaurantes</button>
+                        <button class="category-btn" onclick="filterByCategory('hotel')">🏨 Hoteles</button>
+                        <button class="category-btn" onclick="filterByCategory('activity')">🎯 Actividades</button>
+                        <button class="category-btn" onclick="filterByCategory('shopping')">🛍️ Compras</button>
+                        <button class="category-btn" onclick="filterByCategory('events')">🎪 Eventos</button>
+                    </div>
+                </div>
+
+                <div id="placesList"></div>
+            </div>
+
+            <!-- Map Tab -->
+            <div id="map" class="tab-content">
+                <div class="map-container">
+                    <div class="map-content">
+                        <div class="map-header">
+                            <div class="map-controls">
+                                <h3>Mapa Interactivo</h3>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-primary">🧭</button>
+                                    <div class="status-indicator status-online">
+                                        <span>📶</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="search-bar">
+                                <input type="text" class="search-input" placeholder="Buscar lugares...">
+                                <button class="btn-primary">🔍</button>
+                            </div>
+                            
+                            <div class="category-filters">
+                                <button class="category-btn active">🌎 Todo</button>
+                                <button class="category-btn">🏛️ Monumentos</button>
+                                <button class="category-btn">🍽️ Restaurantes</button>
+                                <button class="category-btn">🏨 Hoteles</button>
+                                <button class="category-btn">🎯 Actividades</button>
+                            </div>
+                        </div>
+                        
+                        <div class="map-view">
+                            <div class="map-placeholder">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📍</div>
+                                <p>Mapa interactivo de Cartagena</p>
+                                <p style="font-size: 0.875rem; color: #6b7280;">Puntos de interés cercanos</p>
+                            </div>
+                            
+                            <div class="map-marker marker-1"></div>
+                            <div class="map-marker marker-2"></div>
+                            <div class="map-marker marker-3"></div>
+                            <div class="map-marker marker-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itinerary Tab -->
+            <div id="itinerary" class="tab-content">
+                <div class="itinerary-header">
+                    <h3 style="font-size: 1.125rem; font-weight: bold;">Mi Itinerario</h3>
+                    <button class="btn-primary">Compartir</button>
+                </div>
+                
+                <div id="itineraryList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <p>Tu itinerario está vacío</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Añade lugares desde la pestaña Explorar</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div id="favorites" class="tab-content">
+                <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 1rem;">Mis Favoritos</h3>
+                <div id="favoritesList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❤️</div>
+                        <p>No tienes favoritos aún</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Marca lugares como favoritos para verlos aquí</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab">🧭</button>
+
+    <!-- Place Detail Modal -->
+    <div id="placeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="btn-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="modal-image" id="modalImage"></div>
+            
+            <div class="modal-grid">
+                <div class="modal-section">
+                    <h4>Información</h4>
+                    <div id="modalInfo"></div>
+                </div>
+                
+                <div class="modal-section">
+                    <h4>Características</h4>
+                    <div id="modalFeatures"></div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h4>Descripción</h4>
+                <p id="modalDescription"></p>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-modal blue" onclick="showReservation()">Reservar ahora</button>
+                <button class="btn-modal green" onclick="addToItineraryFromModal()">Añadir a itinerario</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const places = [
+            {
+                id: 1,
+                name: "Catedral de Cartagena",
+                category: "monument",
+                rating: 4.8,
+                reviews: 1240,
+                distance: "0.5 km",
+                description: "Hermosa catedral colonial del siglo XVI con arquitectura impresionante",
+                price: "Gratis",
+                image: "🏛️",
+                coordinates: [10.4236, -75.5378],
+                openHours: "6:00 AM - 7:00 PM",
+                features: ["Guía disponible", "Acceso para discapacitados", "Fotografía permitida"]
+            },
+            {
+                id: 2,
+                name: "Restaurante La Cevichería",
+                category: "restaurant",
+                rating: 4.6,
+                reviews: 890,
+                distance: "0.8 km",
+                description: "Auténtica comida caribeña con los mejores ceviches de la ciudad",
+                price: "$$",
+                image: "🍽️",
+                coordinates: [10.4242, -75.5376],
+                openHours: "11:00 AM - 10:00 PM",
+                features: ["Terraza", "Reservas online", "Menú vegetariano"]
+            },
+            {
+                id: 3,
+                name: "Hotel Boutique Casa India",
+                category: "hotel",
+                rating: 4.9,
+                reviews: 456,
+                distance: "1.2 km",
+                description: "Hotel boutique en el corazón de la ciudad amurallada",
+                price: "$180/noche",
+                image: "🏨",
+                coordinates: [10.4230, -75.5380],
+                openHours: "24 horas",
+                features: ["Piscina", "Spa", "Desayuno incluido", "WiFi gratis"]
+            },
+            {
+                id: 4,
+                name: "Tour Islas del Rosario",
+                category: "activity",
+                rating: 4.7,
+                reviews: 2100,
+                distance: "15 km",
+                description: "Excursión de día completo a las paradisíacas islas del Rosario",
+                price: "$65/persona",
+                image: "🏝️",
+                coordinates: [10.1733, -75.7667],
+                openHours: "8:00 AM - 5:00 PM",
+                features: ["Transporte incluido", "Almuerzo", "Snorkel", "Guía bilingüe"]
+            }
+        ];
+
+        // State
+        let currentTab = 'explore';
+        let searchQuery = '';
+        let selectedCategory = 'all';
+        let favorites = [];
+        let itinerary = [];
+        let isOffline = false;
+        let selectedPlace = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPlaces();
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                searchQuery = e.target.value;
+                renderPlaces();
+            });
+        });
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // Category filtering
+        function filterByCategory(category) {
+            selectedCategory = category;
+            
+            // Update button states
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderPlaces();
+        }
+
+        // Search functionality
+        function searchPlaces() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderPlaces();
+        }
+
+        // Render places
+        function renderPlaces() {
+            const filteredPlaces = places.filter(place => {
+                const matchesSearch = place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                     place.description.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesCategory = selectedCategory === 'all' || place.category === selectedCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            const placesList = document.getElementById('placesList');
+            placesList.innerHTML = '';
+
+            filteredPlaces.forEach(place => {
+                const placeCard = createPlaceCard(place);
+                placesList.appendChild(placeCard);
+            });
+        }
+
+        // Create place card
+        function createPlaceCard(place, isCompact = false) {
+            const card = document.createElement('div');
+            card.className = `place-card ${isCompact ? 'compact' : ''}`;
+
+            card.innerHTML = `
+                <div class="place-image">
+                    ${place.image}
+                </div>
+                <div style="flex: 1;">
+                    <div class="place-header">
+                        <h3 class="place-title">${place.name}</h3>
+                        <button class="btn-heart ${favorites.includes(place.id) ? 'active' : ''}" onclick="toggleFavorite(${place.id})">
+                            ❤️
+                        </button>
+                    </div>
+                    
+                    <div class="place-rating">
+                        <span>⭐</span>
+                        <span style="font-weight: 600;">${place.rating}</span>
+                        <span style="color: #6b7280;">(${place.reviews} reseñas)</span>
+                        <span style="margin-left: 0.75rem;">📍</span>
+                        <span style="color: #6b7280;">${place.distance}</span>
+                    </div>
+                    
+                    <p class="place-description">${place.description}</p>
+                    
+                    <div class="place-footer">
+                        <div class="place-info">
+                            <span style="font-weight: bold; color: #10b981;">${place.price}</span>
+                            <span>🕒</span>
+                            <span style="font-size: 0.875rem; color: #6b7280;">${place.openHours}</span>
+                        </div>
+                        
+                        <div class="place-actions">
+                            <button class="btn-small blue" onclick="showPlaceDetail(${place.id})">Ver más</button>
+                            <button class="btn-small green" onclick="addToItinerary(${place.id})">+ Itinerario</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Toggle favorite
+        function toggleFavorite(placeId) {
+            if (favorites.includes(placeId)) {
+                favorites = favorites.filter(id => id !== placeId);
+            } else {
+                favorites.push(placeId);
+            }
+            
+            renderPlaces();
+            renderFavorites();
+        }
+
+        // Add to itinerary
+        function addToItinerary(placeId) {
+            const place = places.find(p => p.id === placeId);
+            if (place && !itinerary.some(item => item.id === placeId)) {
+                itinerary.push({
+                    ...place,
+                    time: new Date().toLocaleTimeString()
+                });
+                renderItinerary();
+                alert('¡Lugar añadido al itinerario!');
+            }
+        }
+
+        // Show place detail
+        function showPlaceDetail(placeId) {
+            selectedPlace = places.find(p => p.id === placeId);
+            if (selectedPlace) {
+                document.getElementById('modalTitle').textContent = selectedPlace.name;
+                document.getElementById('modalImage').textContent = selectedPlace.image;
+                document.getElementById('modalDescription').textContent = selectedPlace.description;
+                
+                // Info section
+                document.getElementById('modalInfo').innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="margin-right: 0.5rem;">⭐</span>
+                        <span>${selectedPlace.rating} (${selectedPlace.reviews} reseñas)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="margin-right: 0.5rem;">📍</span>
+                        <span>${selectedPlace.distance}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="margin-right: 0.5rem;">🕒</span>
+                        <span>${selectedPlace.openHours}</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="margin-right: 0.5rem;">💳</span>
+                        <span style="font-weight: bold;">${selectedPlace.price}</span>
+                    </div>
+                `;
+                
+                // Features section
+                document.getElementById('modalFeatures').innerHTML = selectedPlace.features.map(feature => `
+                    <div style="display: flex; align-items: center; margin-bottom: 0.25rem;">
+                        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; margin-right: 0.5rem;"></div>
+                        <span style="font-size: 0.875rem;">${feature}</span>
+                    </div>
+                `).join('');
+                
+                document.getElementById('placeModal').classList.add('active');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('placeModal').classList.remove('active');
+            selectedPlace = null;
+        }
+
+        // Add to itinerary from modal
+        function addToItineraryFromModal() {
+            if (selectedPlace) {
+                addToItinerary(selectedPlace.id);
+                closeModal();
+            }
+        }
+
+        // Show reservation (placeholder)
+        function showReservation() {
+            alert('Funcionalidad de reserva en desarrollo. ¡Pronto disponible!');
+        }
+
+        // Render favorites
+        function renderFavorites() {
+            const favoritesList = document.getElementById('favoritesList');
+            
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❤️</div>
+                        <p>No tienes favoritos aún</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Marca lugares como favoritos para verlos aquí</p>
+                    </div>
+                `;
+                return;
+            }
+
+            favoritesList.innerHTML = '';
+            const favoritePlaces = places.filter(place => favorites.includes(place.id));
+            
+            favoritePlaces.forEach(place => {
+                const placeCard = createPlaceCard(place, true);
+                favoritesList.appendChild(placeCard);
+            });
+        }
+
+        // Render itinerary
+        function renderItinerary() {
+            const itineraryList = document.getElementById('itineraryList');
+            
+            if (itinerary.length === 0) {
+                itineraryList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <p>Tu itinerario está vacío</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Añade lugares desde la pestaña Explorar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            itineraryList.innerHTML = '';
+            
+            itinerary.forEach((place, index) => {
+                const itineraryItem = document.createElement('div');
+                itineraryItem.className = 'itinerary-item';
+                
+                itineraryItem.innerHTML = `
+                    <div class="itinerary-item-header">
+                        <h4 class="itinerary-item-title">${place.name}</h4>
+                        <span class="itinerary-item-time">${place.time}</span>
+                    </div>
+                    <p class="itinerary-item-description">${place.description}</p>
+                    <div class="itinerary-item-info">
+                        <span>📍</span>
+                        <span>${place.distance}</span>
+                        <span>•</span>
+                        <span>${place.price}</span>
+                    </div>
+                `;
+                
+                itineraryList.appendChild(itineraryItem);
+            });
+            
+            // Add optimize button
+            const optimizeBtn = document.createElement('div');
+            optimizeBtn.style.paddingTop = '1rem';
+            optimizeBtn.style.borderTop = '1px solid #e5e7eb';
+            optimizeBtn.innerHTML = `
+                <button class="btn-full green" onclick="optimizeRoute()">
+                    Optimizar ruta
+                </button>
+            `;
+            itineraryList.appendChild(optimizeBtn);
+        }
+
+        // Optimize route (placeholder)
+        function optimizeRoute() {
+            alert('Optimizando ruta... ¡Ruta optimizada!');
+        }
+
+        // Toggle offline mode
+        function toggleOfflineMode() {
+            isOffline = !isOffline;
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (isOffline) {
+                statusIndicator.className = 'status-indicator status-offline';
+                statusIndicator.innerHTML = '<span>📶</span><span>Offline</span>';
+            } else {
+                statusIndicator.className = 'status-indicator status-online';
+                statusIndicator.innerHTML = '<span>🌐</span><span>Online</span>';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('placeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
